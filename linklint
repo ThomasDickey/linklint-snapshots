@@ -37,6 +37,11 @@
 #  Bugs, comments, suggestions welcome: bugs@linklint.org
 #  Updates available at http://www.linklint.org
 #
+# June 22, 2001 2.3.2
+#    -no_warn_index for missing index file warnings
+#    -concise_url flag to suppress output of valid remote links
+#                 on STDOUT
+#
 # June 21, 2001
 #    unified -proxy support (no conflict w/ virtual hosts now)
 #    and moved it to Request() so we should support proxies
@@ -54,8 +59,8 @@
 # 
 #========================================================================
 
-$version = "2.3.1";
-$date    = "June 21, 2001";
+$version = "2.3.2";
+$date    = "June 22, 2001";
 $prog    = "linklint";
 
 $Usage1 = <<USAGE1;
@@ -404,8 +409,8 @@ Network:
   -delay d          Delay d seconds between requests to same host (default 0).
   -redirect         Follow <meta> redirects in remote urls.
   -proxy host[:port] Send remote http requests through a proxy server.
-  -password realm user:password  
-                    Authorize access to "realm".
+  -password realm user:password  Authorize access to "realm".
+  -concise_url      Suppress STDOUT output of valid remote links.
 
 Remote Status Cache:
   -netmod           Put urls in cache and report modified status.
@@ -608,8 +613,8 @@ $DocFlag = $LIST | $ERR | $WARN | $NOXR | $XREF | $FWD | $URLDOC;
 #----- Command Line Input
 
 $MiscFlags = 'http|netmod|netset|output_frames|flush|retry|redirect' .
-             '|textonly|htmlonly|case|error|forward|help|help_all|license' .
-             '|list|net|quiet|silent|orphan|version|warn|xref';
+             '|textonly|htmlonly|case|concise_url|error|forward|help|help_all' .
+             '|license|list|net|quiet|silent|orphan|version|warn|xref|no_warn_index';
 
 $HashOpts =  'local|index|ignore|map|skip|javascript|dont_output';
 
@@ -1135,7 +1140,7 @@ sub LinkLocal
                 return '';
             };
             $lastdir = '1';
-            &Warn("index file not found", $link);
+            $Arg{no_warn_index} or &Warn("index file not found", $link);
             $PrintAddenda{$link} = "[directory listing]";
         }
     }
@@ -3073,6 +3078,7 @@ sub Init
         501, 'service not implemented on server (501)',
     );
 
+    %FlagBad = (%FlagRetry, %FlagWarn, %FlagFail);
     @FlagDebug = (
         keys %FlagOk, keys %FlagMoved, keys %FlagRetry, keys %FlagFail,
         keys %FlagWarn,
@@ -3151,7 +3157,15 @@ sub CheckURLS
         $flag = &CheckUrl($url, 0);
         $flag = &UrlMoved($flag, $url);
         $UrlStatus{$url} = $flag;
-        &main'Progress("  " . &ErrorMsg($flag) );
+        if ($Arg{concise_url}) {
+            $FlagBad{$flag} and do {
+                &main'Progress($url);
+                &main'Progress("  " . &ErrorMsg($flag));
+            };
+        }
+        else {
+            &main'Progress("  " . &ErrorMsg($flag) );
+        }
     }
     %UrlStatus;
 }
@@ -3235,7 +3249,9 @@ sub CheckUrl
 
     $REQHEAD{'Host'} = $host;
 
-    if ($recheck) {
+    if ($Arg{concise_url}) {
+    }
+    elsif ($recheck) {
         &main'Progress("  moved");
         &main'Progress("  $host$path");
     }

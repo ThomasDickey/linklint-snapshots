@@ -1,5 +1,11 @@
-Version 2.3  June 3, 2001
+Version 2.3.2  June 22, 2001
 
+   -no_warn_index
+   -concise_url 
+
+Version 2.3.1 June 21, 2001
+
+   site check proxy support
    -output_frames
    -help_all
    @ and @STDIN
@@ -8,8 +14,6 @@ Version 2.3  June 3, 2001
    -dont_output xxx
 
     linklint.txt, linklint.html => index.txt, index.html
-
-
 
 Version 2.2
 
