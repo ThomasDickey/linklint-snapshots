@@ -39,6 +39,16 @@
 #
 # RECENT CHANGES (see CHANGES.txt for full list):
 #
+# Version 2.3.6.c  October 20, 2002
+# ---------------------------------
+#
+# o Change ResolveAnch() to not complain
+#   about missing empty anchors.
+#
+# Version 2.3.6.c June 10, 2002
+# ---------------------------------
+#  o add -try_suffix (beta)
+#
 # Version 2.3.6.b December 18, 2001 
 # ---------------------------------
 #   o add <link href="LINK"> to parse tree
@@ -431,6 +441,7 @@ Site Checking:
   -case             Check filename case (Windows/Dos only, local only).
   -orphan           List all unused (orphan) files (local only).
   -index file       Use "file" as default index file (local only).
+  -try_suffix .zz   If xx.html not found try xx.zz instead (local only)
   -skip linkset     Don't check html files that match linkset.
   -ignore linkset   Ignore all files matching linkset.
   -limit n          Only check up to n html files (default 500).
@@ -709,6 +720,7 @@ $FullOpts = join "|", qw/
     proxy
     root
     timeout
+    try_suffix
     url_doc_prefix
 
     /;
@@ -866,6 +878,9 @@ $UrlOk = $Abort = 0;
     };
 
 
+
+    $Try_Suffix = $Arg{try_suffix} ? [split /\s+/, $Arg{try_suffix}] : undef;
+   
     $Limit = $Arg{'limit'} = $Arg{'limit'} || 500; # check at most 500 files
 
     $Arg{'root'} && do {
@@ -1226,6 +1241,10 @@ sub LinkLocal
     elsif ( -f _ )  {
         ((stat(_))[2] & 4 == 0) && &Warn("not world readable", $link);
     }
+    elsif( $Try_Suffix and $new_link = Try_Suffix($link)) {
+        $link = $new_link;
+        ((stat(_))[2] & 4 == 0) && &Warn("not world readable", $link);
+    }
     else {
         &AppendList(*LostFile, $link, $referer);
 
@@ -1265,6 +1284,16 @@ sub LinkLocal
 
     close($path);
     $link;
+}
+
+sub Try_Suffix {
+    my $link = shift;
+    $link =~ s/(\.\w\w)?\.($HtmlExts)$// or return;
+    for my $suffix (@$Try_Suffix) {
+        my $new_link = $link . $suffix;
+        -f "$ServerRoot$new_link" and return $new_link;
+    }
+    return;
 }
 
 #--------------------------------------------------------------------------
@@ -1959,13 +1988,13 @@ sub ProcessLocal {
 
     $Arg{no_anchors} or do {
         &HashUnique(*WantAnch);    
-        &ResolveAnch(*WantAnch, *Anchor, *LostAnch);
+        &ResolveAnch(*WantAnch, *Anchor, *LostAnch, 1);
     };
 
     #---- resolve named image maps
 
     &HashUnique(*WantMap);    
-    &ResolveAnch(*WantMap, *ImgMap, *LostMap);
+    &ResolveAnch(*WantMap, *ImgMap, *LostMap, 0);
     
     &HashUnique(*FileList);   # pathinfo and dirlookup can cause extras.
     &HashUnique(*LostFile);   # pathinfo and dirlookup can cause extras.
@@ -2662,7 +2691,7 @@ sub InvertKeys
 }
 
 #--------------------------------------------------------------------------
-# ResolveAnch(*want, *found, *lost)
+# ResolveAnch(*want, *found, *lost, $empty_ok)
 #
 #     named anchors wanted: %want{link#frag} = "ref1 \n ref2 \n ..."
 #     named anchors found:  %found{link#frag} = 1
@@ -2672,12 +2701,13 @@ sub InvertKeys
 
 sub ResolveAnch
 {
-    local(*want, *found, *lost) = @_;
+    local(*want, *found, *lost, $empty_ok) = @_;
 
     foreach ( keys %want) {
         /^([^#]*)(#.*)/;                       # $1 will contain filename
         $file = $1;
         $anch = $2;
+	$empty_ok and length($anch) == 0 and next;
         $Ignore && $url =~ /$Ignore/o && next; # ignore ignored files
         $Skipped{$file} && next;               # skip anchors in skipped files
         $ref = $want{$_};
