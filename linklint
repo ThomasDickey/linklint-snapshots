@@ -39,6 +39,12 @@
 #
 # RECENT CHANGES (see CHANGES.txt for full list):
 #
+# Version 2.3.5 August 13, 2001 
+# -----------------------------
+#   o added -no_anchors tag (for larger sites)
+#   o fixed bug that prevented site checks of
+#     some non port 80 sites. (Thanks Rick Perry).
+#
 # Version 2.3.4 August 8, 2001 
 # ----------------------------
 #   o keep query string for http site checks
@@ -73,8 +79,8 @@
 #    
 #========================================================================
 
-$version = "2.3.4";
-$date    = "August 8, 2001";
+$version = "2.3.5";
+$date    = "August 13, 2001";
 $prog    = "linklint";
 
 $Usage1 = <<USAGE1;
@@ -643,6 +649,7 @@ $MiscFlags = join "|", qw/
     net
     netmod
     netset
+    no_anchors
     no_warn_index
     no_query_string
     orphan
@@ -1429,7 +1436,7 @@ TAG:
 
         if ( /^a$/ )
         {
-            $att =~ s/\sname${ATTRIB}//io &&
+            $att =~ s/\sname${ATTRIB}//io && ! $Arg{no_anchors} &&
                 ($Anchor{"$CurFile#$+"} = "\n");
 
             $att =~ /\shref${ATTRIB}/io || next;
@@ -1443,7 +1450,7 @@ TAG:
 
             %ProtoJS && $url =~ /^javascript:/ && &ProtoJS($url, $referer);
 
-            $anch && $url =~ m#^/# &&
+            $anch && $url =~ m#^/# && ! $Arg{no_anchors} &&
                 &AppendList(*WantAnch, "$url$anch", $link);
         }
         elsif ( /^base$/ ) {
@@ -1848,8 +1855,10 @@ sub ProcessLocal {
 
     #---- Resolve named anchors
 
-    &HashUnique(*WantAnch);    
-    &ResolveAnch(*WantAnch, *Anchor, *LostAnch);
+    $Arg{no_anchors} or do {
+        &HashUnique(*WantAnch);    
+        &ResolveAnch(*WantAnch, *Anchor, *LostAnch);
+    };
 
     #---- resolve named image maps
 
@@ -3282,7 +3291,7 @@ sub Parse
     local($host) = $thishost;
     local($scheme);
     local($LINK) = $oldlink;
-    local($url) = "http://$thishost$LINK";  # for warning messages
+    local($url) = "http://$thishost:$port$LINK";  # for warning messages
 
 #    $HostError{$host} && return ($HostError{$host}, $LINK);
 

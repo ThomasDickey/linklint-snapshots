@@ -17,7 +17,7 @@ Linklint Documentation - index
 </table>
 
 <font size=3>
-Version 2.3.4 August 8, 2001
+Version 2.3.5 August 13, 2001
 </font>
 
 <p>
@@ -94,6 +94,12 @@ Hints
 How it works
 </a>
 </font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
+</a>
+</font></td>
 
 <td align=center bgcolor="white">
 <font size=2 face="helvetica,sans serif,ariel"><font color="#dd6666">
@@ -148,7 +154,9 @@ Topic index
 The <b><a href="#command_index">command index</a></b> links every
 input command to the <i>section</i> in the documenation where that
 command can be found.  
-<br>
+
+<p>
+
 The <b><a href="#topic_index"> topic
 index</a></b> gives a quick overview off all of the documentation
 and links to all of the sections.
@@ -234,6 +242,8 @@ Command Index
 
 <a href="inputs.html#statuscache">-netset</a>
 
+<a href="inputs.html#other_local">-no_anchors</a>
+
 <a href="inputs.html#other_remote">-no_query_string</a>
 
 <a href="inputs.html#other_local">-no_warn_index</a>
@@ -309,63 +319,50 @@ Inputs
 </font></td></tr></table>
 <p>
  <table width="85%" cellpadding=0 cellspacing=0 border=0>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#command">Input Files</a></b>
-
-<a href="inputs.html#command_files">Command Files</a> &middot;
-<a href="inputs.html#stdin_commands">Reading Commands from STDIN</a> &middot;
-<a href="inputs.html#local_files">Files of Local Pages</a> &middot;
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#command">Input Files</a></b><a href="inputs.html#command_files">Command Files</a> 
+&middot;
+<a href="inputs.html#stdin_commands">Reading Commands from STDIN</a> 
+&middot;
+<a href="inputs.html#local_files">Files of Local Pages</a> 
+&middot;
 <a href="inputs.html#http_files">Files of Remote Links</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#linkset">Which Files to Check</a></b>
-
-<a href="inputs.html#linkset_def">Linksets defined</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#linkset">Which Files to Check</a></b><a href="inputs.html#linkset_def">Linksets defined</a> 
+&middot;
 <a href="inputs.html#other_file">Other File Selection Options</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#local">Local Site Checking</a></b>
-
-<a href="inputs.html#other_local">Other Local Site Options</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#remote">HTTP Site Checking</a></b>
-
-<a href="inputs.html#other_remote">HTTP Site Check Options</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#url">Remote URL Checking</a></b>
-
-<a href="inputs.html#which_urls">Which URLs to check</a> &middot;
-<a href="inputs.html#other_url">Other Remote URL Options</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#local">Local Site Checking</a></b><a href="inputs.html#other_local">Other Local Site Options</a>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#remote">HTTP Site Checking</a></b><a href="inputs.html#other_remote">HTTP Site Check Options</a>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#url">Remote URL Checking</a></b><a href="inputs.html#which_urls">Which URLs to check</a> 
+&middot;
+<a href="inputs.html#other_url">Other Remote URL Options</a> 
+&middot;
 <a href="inputs.html#statuscache">Status Cache Options</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#output">Output Options</a></b>
-
-<a href="inputs.html#multi_file">Multi File Output</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#output">Output Options</a></b><a href="inputs.html#multi_file">Multi File Output</a> 
+&middot;
 <a href="inputs.html#single_file">Single File Output</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="inputs.html#debug">Debug and other Flags</a></b>
-
-<a href="inputs.html#debug_debug">Debug Flags</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="inputs.html#debug">Debug and other Flags</a></b><a href="inputs.html#debug_debug">Debug Flags</a> 
+&middot;
 <a href="inputs.html#debug_other">Other Flags</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
+</td></tr>
  </table>
  <dt><br>
  <p>
@@ -378,29 +375,22 @@ Outputs
 </font></td></tr></table>
 <p>
  <table width="85%" cellpadding=0 cellspacing=0 border=0>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="outputs.html#doc_dir">-Doc Directory</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="outputs.html#site_check">Site-Check Output Files</a></b>
-
-<a href="outputs.html#site_summary">Site-Check Summary Files</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="outputs.html#site_check">Site-Check Output Files</a></b><a href="outputs.html#site_summary">Site-Check Summary Files</a> 
+&middot;
 <a href="outputs.html#site_data">Site-Check Data Files</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="outputs.html#url_check">Url-Check Output Files</a></b>
-
-<a href="outputs.html#url_summary">Url-Check Summary Files</a> &middot;
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="outputs.html#url_check">Url-Check Output Files</a></b><a href="outputs.html#url_summary">Url-Check Summary Files</a> 
+&middot;
 <a href="outputs.html#url_data">Url-Check Data Files</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
+</td></tr>
  </table>
  <dt><br>
  <p>
@@ -413,49 +403,34 @@ Hints
 </font></td></tr></table>
 <p>
  <table width="85%" cellpadding=0 cellspacing=0 border=0>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="hints.html#command">Create a Command File</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="hints.html#memory">Resolving Memory Problems</a></b>
-
-<a href="hints.html#sections">Check Your Site in Sections</a> &middot;
-<a href="hints.html#run_twice">Run Linklint Twice</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="hints.html#memory">Resolving Memory Problems</a></b><a href="hints.html#sections">Check Your Site in Sections</a> 
+&middot;
+<a href="hints.html#run_twice">Run Linklint Twice</a> 
+&middot;
+<a href="hints.html#no_anchor">Use the -no_anchor option</a>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="hints.html#password">Add Passwords</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="hints.html#imagemap">Add Server-Side Image Maps</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="hints.html#errors">Tracking Down Errors</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="hints.html#redirect">Server Redirection</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
+</td></tr>
  </table>
  <dt><br>
  <p>
@@ -468,58 +443,88 @@ How it works
 </font></td></tr></table>
 <p>
  <table width="85%" cellpadding=0 cellspacing=0 border=0>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#linkset">Creating Seeds for a Site Check</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#recursion">Site Check Recursion</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#parse">Parsing HTML Files</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#resolve">Resolving Links</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#default">Default Index Files</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
 <b><a href="howitworks.html#imagemap">Server-side Image Maps</a></b>
-
-
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
- <tr><td valign=top width="30%"><font size=2 face="helvetica,sans serif,ariel">
-<b><a href="howitworks.html#bugs">Known Bugs</a></b>
-
-<a href="howitworks.html#memory">Memory vs. Speed</a> &middot;
-<a href="howitworks.html#wont_check">What Linklint Won't Check</a>
-
-<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
-</font></td></tr>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="howitworks.html#status_cache">How the Status Cache Works</a></b>
+</td></tr>
+ </table>
+ <dt><br>
+ <p>
+<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
+<tr><td>
+<font size=2 face="helvetica,sans serif,ariel">
+<font size=3 color="#ffffff"><b>
+Bugs
+</b></font>
+</font></td></tr></table>
+<p>
+ <table width="85%" cellpadding=0 cellspacing=0 border=0>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="bugs.html#bug_reports">Bug Reports</a></b>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="bugs.html#memory">Memory Problems</a></b>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="bugs.html#parsing">Parsing Problems</a></b>
+</td></tr>
+ <tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="bugs.html#wont_check">What Linklint Won't Check</a></b>
+</td></tr>
  </table>
 
+
+<p>
+<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
+<tr><td>
+<font size=2 face="helvetica,sans serif,ariel">
+<font size=3 color="#ffffff"><b>
+Other
+</b></font>
+</font></td></tr></table>
+<p>
+<table width="85%" cellpadding=0 cellspacing=0 border=0>
+<tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="license.html">GNU General Public License</a></b>
+</td></tr>
+
+<tr><td valign=top width="30%">
+<font size=2 face="helvetica,sans serif,ariel">
+<b><a href="language.html">Common Country/Language Codes</a></b>
+</td></tr>
+
+</table>
+<tr><td><img src=dot.gif width=50 height=1 alt=""></td><td></td></tr>
+</font></td></tr>
 
 
 </blockquote>
@@ -600,6 +605,12 @@ Hints
 <font size=2 face="helvetica,sans serif,ariel">
 <a href="howitworks.html">
 How it works
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
 </a>
 </font></td>
 
