@@ -16,7 +16,7 @@ Linklint Documentation - how it works
 </table>
 
 <font size=3>
-Version 2.3.4 August 8, 2001
+Version 2.3.5 August 13, 2001
 </font>
 
 
@@ -99,6 +99,12 @@ How it works
 </font></td>
 <td align=center bgcolor="#ddddff">
 <font face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font face="helvetica,sans serif,ariel">
 <a href="doc_index.html">
 Index
 </a>
@@ -135,29 +141,29 @@ Index
 <a href="#linkset">
 Seeds
 </a>
-     &middot;
+      &middot;
 <a href="#recursion">
 Recursion
 </a>
-   &middot;
+    &middot;
 <a href="#parse">
 Parsing
 </a>
-       &middot;
+        &middot;
 <a href="#resolve">
-Resolving links
+Resolving&nbsp;links
 </a>
-     &middot;
+      &middot;
 <a href="#default">
-Default Files
+Default&nbsp;Files
+</a>
+      &middot;
+<a href="#imagemap">
+Image&nbsp;Maps
 </a>
      &middot;
-<a href="#imagemap">
-Image Maps
-</a>
-    &middot;
-<a href="#bugs">
-Bugs
+<a href="#status_cache">
+Status&nbsp;Cache
 </a>
 
 </font>
@@ -606,8 +612,8 @@ Linklint to be able to find the map file.
 <td>
 <font face="helvetica,sans serif,ariel">
 <font size=3 color="#ffffff"><b>
-<a name="bugs">
-Known Bugs
+<a name="status_cache">
+How the Status Cache Works
 </a>
 </b></font>
 </font>
@@ -624,67 +630,32 @@ Known Bugs
 <blockquote>
 <font face="helvetica,sans serif,ariel">
 
-<p>
-<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
-<tr><td>
-<font face="helvetica,sans serif,ariel">
-<font size=3 color="#ffffff"><b>
-<a name="memory">
-Memory vs. Speed
-</a>
-</b></font>
-</font></td></tr></table>
-<p>
+Linklint uses a combination of three different methods to keep track
+of remote URL modification times:
 
-Linklint was designed for maximum speed.  It stores all
-information about your site in memory before writing any
-output files.   If you are running out of memory there are
-several hints that will help ease this problem.
+<dl>
 
-<p>
+<dt> <b>Last-Modified date</b>
+<dd> Many web servers, let Linklint know that last date a file
+     was modified.  If this date is available for a page then Linklint 
+     uses it for keeping track of changes.
 
-Linklint parses HTML files as fast as possible.  One trick
-that is used is to use the "&lt;" character as the effective
-"new-line", so HTML files are split on "&lt;" as they are
-read.  This is very fast but has two downsides.
-<ol>
+<dt> <b>If-Modified-Since requests</b>
 
-<li> If your HTML tags contains "&lt;" inside of HTML tags as in
-     <b>&lt;img src=back.gif alt="&lt;&lt;&lt;"&gt;</b>
-     then Linklint will need to do some backtracking (which will
-     slow it down a bit.  Solution: always use &amp;lt; instead
-     of &lt; inside of HTML tags.
+<dd> If the <i>Last-Modified</i> is not available then Linklint tries
+     an <i>If-Modified-Since</i> request.  Linklint asks if the page
+     has been modified since the last time (according to Linklint) it
+     was checked. 
 
-<li> if an HTML tag is missing a closing "&gt;" or if you have
-     a bare "&lt;" character in the text of your page, Linklint will
-     read in everything in the file until the next &gt; (or
-     the end of file) as a single tag.  This can cause a memory
-     problem.  Solution: use weblint to check the HTML in your
-     pages before running link checking.  Linklint is a link
-     checker not an HTML checker.
-</ol>
+<dt> <b>Checksum of the remote file</b>
+<dd> If neither method above is available on a remote server then
+     Linklint reads in the entire remote file, makes a checksum
+     of its contents and uses this checksum to keep track of changes.
+</dl>
 
-
-
-<p>
-<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
-<tr><td>
-<font face="helvetica,sans serif,ariel">
-<font size=3 color="#ffffff"><b>
-<a name="wont_check">
-What Linklint Won't Check
-</a>
-</b></font>
-</font></td></tr></table>
-<p>
-
-Linklint will not be able to track down links that require
-specific visitor form input.  For example, a search engine site uses
-form input from visitors to generate new HTML pages.  These pages would
-not be checked by Linklint.  Likewise, if you have written your own
-CGI program that uses the <i>IsMap</i> attribute to create new links
-depending on where a visitor clicks on an image, Linklint will not be
-able to find these links.
+These methods are totally transparent to the Linklint user (you). For
+each URL the most efficient method is tried first, and the checksum
+is only used as a last resort.
 
 </blockquote>
 
@@ -770,6 +741,12 @@ How it works
 </font></td>
 <td align=center bgcolor="#ddddff">
 <font face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font face="helvetica,sans serif,ariel">
 <a href="doc_index.html">
 Index
 </a>
@@ -806,29 +783,29 @@ Index
 <a href="#linkset">
 Seeds
 </a>
-     &middot;
+      &middot;
 <a href="#recursion">
 Recursion
 </a>
-   &middot;
+    &middot;
 <a href="#parse">
 Parsing
 </a>
-       &middot;
+        &middot;
 <a href="#resolve">
-Resolving links
+Resolving&nbsp;links
 </a>
-     &middot;
+      &middot;
 <a href="#default">
-Default Files
+Default&nbsp;Files
+</a>
+      &middot;
+<a href="#imagemap">
+Image&nbsp;Maps
 </a>
      &middot;
-<a href="#imagemap">
-Image Maps
-</a>
-    &middot;
-<a href="#bugs">
-Bugs
+<a href="#status_cache">
+Status&nbsp;Cache
 </a>
 
 </font>

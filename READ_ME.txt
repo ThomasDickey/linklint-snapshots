@@ -1,6 +1,6 @@
 Linklint  - a fast link checker and web site maintenance tool
 -------------------------------------------------------------
-Version 2.3.4 August 8, 2001
+Version 2.3.5 August 13, 2001
 Copyright (C) 1997 -- 2001 James B. Bowlin.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify

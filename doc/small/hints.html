@@ -17,7 +17,7 @@ Linklint Documentation - hints
 
 
 <font size=3>
-Version 2.3.4 August 8, 2001
+Version 2.3.5 August 13, 2001
 </font>
 
 
@@ -95,6 +95,12 @@ Hints
 <font size=2 face="helvetica,sans serif,ariel">
 <a href="howitworks.html">
 How it works
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
 </a>
 </font></td>
 <td align=center bgcolor="#ddddff">
@@ -239,13 +245,24 @@ file after your host name.  The command file should look like:
 -limit 1000</pre></font>
 
 Resist the temptation to include any <i>linksets</i> in this command
-file.  The reason will become clear when you start <b><a href="#errors">tracking down broken links</a></b>.
+file.  The reason will become clear when you start <b><a href="#errors">tracking down broken links</a></b>.  If you need to use a
+large list of linksets, another option is to include these in their
+own separate command file.
 
 <p>
 
-
 You can check your home page with <tt><b>linklint @hostname</b></tt>.
 You can check your entire site with <tt><b>linklint @hostname /@</b></tt>.
+
+<p>
+
+Often the easiest way to understand some of the many features that
+Linklint has to offer is to try them out.  Linklint is very fast and
+it is easy to try play around with it on just a few pages.  Start with
+a simple command file like the example above and then add features and
+options as needed.  In the spirit of Perl, Linklint has been designed
+to "<i>do the right thing</i>".
+
 
 </font>
 </blockquote>
@@ -272,6 +289,9 @@ Resolving Memory Problems
 <blockquote>
 <font size=2 face="helvetica,sans serif,ariel">
 
+
+Here are some things you can do to reduce the amount
+of memory that Linklint uses.
 
 <p>
 <table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
@@ -367,6 +387,25 @@ checking your site.  Instead, after you check your site (without the
 
 You will end up with the same results as with a single pass of Linklint
 but the memory requirements will have been eased.
+
+<p>
+<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
+<tr><td>
+<font size=2 face="helvetica,sans serif,ariel">
+<font size=3 color="#ffffff"><b>
+<a name="no_anchor">
+Use the -no_anchor option
+</a>
+</b></font>
+</font></td></tr></table>
+<p>
+
+Since there are often many named anchors on a single page, the list of
+named anchors that Linklint generates and checks can be larger than
+the list of HTML pages.  You can use the <font color="#cc0000"><tt><b>-no_anchors</b></tt></font>
+option to tell Linklint to ignore named anchors which should reduce
+memory consumption.
+
 
 </font>
 </blockquote>
@@ -660,6 +699,12 @@ Hints
 <font size=2 face="helvetica,sans serif,ariel">
 <a href="howitworks.html">
 How it works
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
 </a>
 </font></td>
 <td align=center bgcolor="#ddddff">

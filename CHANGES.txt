@@ -1,6 +1,12 @@
 Linklint Change History
 =======================
 
+Version 2.3.5 August 13, 2001 
+-----------------------------
+ o added -no_anchors tag (for larger sites)
+ o fixed bug that prevented site checks of
+   some non port 80 sites. (Thanks Rick Perry).
+
 Version 2.3.4  August 8, 2001
 -----------------------------
  o s!//+!/!g inside of UniqueUrl()

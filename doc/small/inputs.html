@@ -17,7 +17,7 @@ Linklint Documentation - inputs
 </table>
 
 <font size=3>
-Version 2.3.4 August 8, 2001
+Version 2.3.5 August 13, 2001
 </font>
 
 
@@ -95,6 +95,12 @@ Hints
 <font size=2 face="helvetica,sans serif,ariel">
 <a href="howitworks.html">
 How it works
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
 </a>
 </font></td>
 <td align=center bgcolor="#ddddff">
@@ -613,10 +619,18 @@ Substitutes leading <i>/a</i> with <i>/b</i>.  For
 maps or to simulate <b><a href="hints.html#redirect">Server Redirection</a></b>.  
 
 <p>
-<font color="#cc0000"><tt><b> -no_warn_index</b></tt></font>
+<font color="#cc0000"><tt><b>-no_warn_index</b></tt></font>
 
 Turns of the "index file not found" warning.  Applies to local site
 checking only.
+
+<p>
+<font color="#cc0000"><tt><b>-no_anchors</b></tt></font>
+
+Tells Linklint to ignore named anchors.  This could ease memory
+problems for people with large sites who are primarily interested in
+missing pages and not missing named anchors.  This option works for
+both HTTP and local site checks.
 
 
 </font>
@@ -983,43 +997,6 @@ checksum are dynamically generated and will always be reported as modified.
 Reads and writes the <i>linklint.url</i> cache file in this
 directory.  The default directory is set by your LINKLINT or HOME
 environment variables. 
-
-<p>
-<table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
-<tr><td>
-<font size=2 face="helvetica,sans serif,ariel">
-<font size=3 color="#ffffff"><b>
-How the status cache works
-</b></font>
-</font></td></tr></table>
-<p>
-
-Linklint uses a combination of three different methods to keep track
-of remote URL modification times:
-
-<dl>
-
-<dt> <b>Last-Modified date</b>
-<dd> Many web servers, let Linklint know that last date a file
-     was modified.  If this date is available for a page then Linklint 
-     uses it for keeping track of changes.
-
-<dt> <b>If-Modified-Since requests</b>
-
-<dd> If the <i>Last-Modified</i> is not available then Linklint tries
-     an <i>If-Modified-Since</i> request.  Linklint asks if the page
-     has been modified since the last time (according to Linklint) it
-     was checked. 
-
-<dt> <b>Checksum of the remote file</b>
-<dd> If neither method above is available on a remote server then
-     Linklint reads in the entire remote file, makes a checksum
-     of its contents and uses this checksum to keep track of changes.
-</dl>
-
-These methods are totally transparent to the Linklint user (you). For
-each URL the most efficient method is tried first, and the checksum
-is only used as a last resort.
 
 </font>
 </blockquote>
@@ -1418,6 +1395,12 @@ Hints
 <font size=2 face="helvetica,sans serif,ariel">
 <a href="howitworks.html">
 How it works
+</a>
+</font></td>
+<td align=center bgcolor="#ddddff">
+<font size=2 face="helvetica,sans serif,ariel">
+<a href="bugs.html">
+Bugs
 </a>
 </font></td>
 <td align=center bgcolor="#ddddff">
