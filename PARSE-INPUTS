@@ -1,0 +1,28 @@
+<a       href="WANT-ANCH"
+         name="ANCHOR"             id="ANCHOR"/>
+<applet  code="APPLET"
+         archive="????"
+         codebase="????"           id="ANCHOR"/>
+<area    href="LINK"               id="ANCHOR"/>
+<base    href="BASE"                          />
+<body    background="LINK-IMAGE"              />
+<bgsound src="LINK"                id="ANCHOR"/>
+<embed   src="LINK"                id="ANCHOR"/>
+<form    action="ACTION"           id="ANCHOR"/> 
+<frame   src="LINK"                id="ANCHOR"/>
+<head/>
+<html/>
+<img     src="LINK-IMAGE"
+         lowsrc="LINK-IMAGE"
+         dynsrc="LINK-IMAGE"
+         usemap="WANT-MAP"         id="ANCHOR"/>
+<input   src="LINK"                id="ANCHOR"/>
+<link    href="LINK"/>
+<map     name="MAP"                id="MAP"   />
+<meta    http-equiv="REFRESH"
+         content="????"                       />
+<style/>
+<title/>
+<%else% id="ANCHOR"/>
+
+

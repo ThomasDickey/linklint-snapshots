@@ -1,0 +1,180 @@
+#!/usr/bin/perl
+
+use strict;
+no strict 'refs';
+
+my $INDENT_1 = " " x 8;
+my $INDENT_2 = "$INDENT_1    ";
+my $INDENT_3 = "$INDENT_2    ";
+
+
+print<<START_COMMENT;
+
+#==============================================================================
+# start of auto generated code by read-parse.pl
+#==============================================================================
+
+START_COMMENT
+
+my $tags = read_file();
+print_tag(@$tags);
+
+print<<END_COMMENT;
+
+#==============================================================================
+# end of auto generated code
+#==============================================================================
+
+END_COMMENT
+
+sub read_file {
+    my $tags = [];
+    $/ = "<";
+    while(<>) {
+        /^</ and next;
+        s/^(\S+)// or warn "bad tag in $_";
+        my $name = $1;
+        $name =~ s|/?>$||;
+
+        my $tag = { name => $name};
+        
+        while(s/^\s+(\S+)="([^\"]+)"//) {
+            my ($name, $value) = ($1, $2);
+            push @{$tag->{attr_order}}, $name;
+            $tag->{attr}->{$name} = $value;
+        }
+        push @$tags, $tag;
+    }
+    $tags->[0]->{first_tag} = 1;
+    return $tags;
+}
+
+sub print_tag {
+    for my $tag (@_) {
+        my $name = $tag->{name};
+        my $if_clause = $tag->{first_tag} ? "if" : "elsif";
+        my $clause = $name eq '%else%' ? "else" : "$if_clause (/^$name\$/)";
+    
+        print "${INDENT_1}$clause {\n";
+        for my $name (@{$tag->{attr_order}}) {
+            my $value = $tag->{attr}->{$name};
+            $value =~ s/-/_/g;
+            $value =~ /\?/ and next;
+            eval {print &$value($name);};
+            $@ and print STDERR "missing $value sub\n";
+        }
+        print "${INDENT_1}}\n";
+    }
+}
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+sub attr_and {
+    my ($attr, $rest) = @_;
+    return <<ATTR_AND}
+$INDENT_2\$att =~ /\\s${attr}\${ATTRIB}/io and
+$INDENT_3@{[join "\n$INDENT_3", split /\n/, $rest]}
+ATTR_AND
+
+
+sub attr_and_do {
+    my ($attr, $rest) = @_;
+    return <<AND_DO}
+$INDENT_2\$att =~ /\\s${attr}\${ATTRIB}/io and do {
+$INDENT_3@{[join "\n$INDENT_3", split /\n/, $rest]}
+$INDENT_2};
+AND_DO
+
+
+sub LINK {
+    return  attr_and(shift,<<'LINK')}
+$list{&UniqueUrl($+)}++;
+LINK
+
+
+sub LINK_IMAGE {
+    return LINK(@_);
+}
+
+
+sub ANCHOR {
+    return attr_and(shift, <<'ANCHOR')}
+$Arg{yes_anchors}
+&& ! $IGNORE_ANCHOR{$+}
+&& ($Anchor{"$CurFile#$+"} = "\n");
+ANCHOR
+
+
+sub APPLET {
+    return attr_and_do(shift, <<'APPLET')}
+$code = $+;
+$code =~ /\.class$/i || ( $code .= ".class" );
+my ($jar, $base);
+$att =~ /\sarchive${ATTRIB}/io and $jar = $+;
+my $file = $jar || $code || next;
+$att =~ /\scodebase${ATTRIB}/io and do {
+    ($base = $+) =~ s#/$##;
+    $file = "$base/$file";
+};
+$list{&UniqueUrl($file)}++;;
+APPLET
+
+
+sub BASE {
+    return attr_and_do(shift,<<'BASE')}
+$DbP && print $ErrTag;
+&BaseTag($+);;
+BASE
+
+
+sub ACTION {
+    return attr_and_do(shift, <<'ACTION')}
+$temp = &UniqueUrl($+);
+&AppendList(*Action, $temp, $link);
+$list{$temp}++;
+ACTION
+
+
+sub WANT_MAP {
+    return attr_and_do(shift, <<'WANT_MAP')}
+$temp = $+;
+$temp =~ /^#/ && ($temp = "$BaseFile$temp");
+$anch = $temp =~ /(#.*)$/ ? $1 : '';
+$url = &UniqueUrl($temp);
+$list{$url}++;
+$anch && $url =~ m#^/# &&
+&AppendList(*WantMap, "$url$anch", $link);
+WANT_MAP
+
+
+sub MAP {
+    return attr_and(shift, <<'MAP')}
+ ($ImgMap{"$CurFile#$+"} = "\n");
+MAP
+
+
+sub WANT_ANCH {
+  return attr_and_do(shift, <<'WANT_ANCH')}
+$temp = $+;
+$temp =~ /^#/ && ($temp = "$BaseFile$temp");
+$anch = $temp =~ /(#.*)$/ ? $1 : '';
+$url = &UniqueUrl($temp);
+$list{$url}++;
+%ProtoJS && $url =~ /^javascript:/ && &ProtoJS($url, $referer);
+$anch && $url =~ m#^/# && $Arg{yes_anchors} &&
+    &AppendList(*WantAnch, "$url$anch", $link);
+WANT_ANCH
+
+
+sub REFRESH {
+    return attr_and_do(shift, <<'REFRESH')}
+$+ =~ /^refresh$/i || next;
+$att =~ /\scontent\s*=\s*"([^"]*)"/i || next;
+$1 =~ /url=([^"\s]+)/i || next;
+$temp = $1;
+$temp =~ m#^\w+://# ||
+&Warn("re-direct should be absolute", $link);
+$url = &UniqueUrl($temp);
+$list{$url}++;
+REFRESH

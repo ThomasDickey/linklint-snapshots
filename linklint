@@ -39,6 +39,19 @@
 #
 # RECENT CHANGES (see CHANGES.txt for full list):
 #
+# Version 2.3.6.b December 18, 2001 
+# ---------------------------------
+#   o add <link href="LINK"> to parse tree
+#   o add css filetype
+#   o add checksum flag (again) (thanks Tim Heap)
+#   o ignore -index files in orphan check
+#
+# Version 2.3.6 August 26, 2001 
+# -----------------------------
+#   o added -ignore_anchor option
+#   o now look for id= attribute
+#   o autogenerate parse tree
+#
 # Version 2.3.5 August 13, 2001 
 # -----------------------------
 #   o added -no_anchors tag (for larger sites)
@@ -79,8 +92,8 @@
 #    
 #========================================================================
 
-$version = "2.3.5";
-$date    = "August 13, 2001";
+$version = "2.3.6";
+$date    = "September 26, 2001";
 $prog    = "linklint";
 
 $Usage1 = <<USAGE1;
@@ -453,6 +466,7 @@ Output:
   -url_doc_prefix p Prefix Remote URL output files with "p" instead of "url".
   -output_index xxx Output index files will be "xxx.txt" and "xxx.html".
   -dont_output xxx  Don't create output files that contain xxx.
+  -ignore_anchor xx Ignore anchors named "xx".
 
 Debug Flags:
   -db1              Debug input, linkset expressions.
@@ -532,6 +546,7 @@ $StandardMaps = '(/imagemap|/cgi-(b|w)in/(imagemap.exe|htimage))';
     'video::\.(mpg|mpeg|avi|qt|mov)$',
     'shockwave::\.dcr$',
     'applet::\.class$',
+    'style-sheet::\.css$',
     'other::unknown',
 );
 
@@ -636,6 +651,7 @@ $DocFlag = $LIST | $ERR | $WARN | $NOXR | $XREF | $FWD | $URLDOC;
 $MiscFlags = join "|", qw/
 
     case
+    checksum
     concise_url
     error
     flush
@@ -670,6 +686,7 @@ $HashOpts = join "|", qw/
     dont_output
     http_header
     ignore
+    ignore_anchor
     index
     javascript
     language 
@@ -704,8 +721,9 @@ $FullOpts = join "|", qw/
 
 $Arg{'timeout'}   = 15;        # how long to wait for a response
 $Arg{'delay'}     = 0;         # how long to delay between requests
-
 $Arg{'VERSION'}   = $version;
+
+$Arg{yes_anchors} = $Arg{no_anchors} ? 0 : 1;
 
 $Headline   = "#" . "-" x 60 . "\n"; # used to print lists
 
@@ -882,6 +900,7 @@ $UrlOk = $Abort = 0;
     %INDEX && do {
         grep(m/[A-Z]/, @DefIndex = keys %INDEX) && $DefCaseSens++;
         $Arg{'index'} = join(" ", @DefIndex);
+        $DefIndexRE = join "|", @DefIndex;
     };
 
     %JAVASCRIPT && do {
@@ -1434,91 +1453,171 @@ TAG:
             $ErrTag .= "\n";
         };
 
-        if ( /^a$/ )
-        {
-            $att =~ s/\sname${ATTRIB}//io && ! $Arg{no_anchors} &&
-                ($Anchor{"$CurFile#$+"} = "\n");
+#==============================================================================
+# start of auto generated code by read-parse.pl
+#==============================================================================
 
-            $att =~ /\shref${ATTRIB}/io || next;
-
-            $temp = $+;
-            $temp =~ /^#/ && ($temp = "$BaseFile$temp");
-
-            $anch = $temp =~ /(#.*)$/ ? $1 : '';
-            $url = &UniqueUrl($temp);
-            $list{$url}++;
-
-            %ProtoJS && $url =~ /^javascript:/ && &ProtoJS($url, $referer);
-
-            $anch && $url =~ m#^/# && ! $Arg{no_anchors} &&
-                &AppendList(*WantAnch, "$url$anch", $link);
-        }
-        elsif ( /^base$/ ) {
-            $att =~ /\shref${ATTRIB}/io || next;
-            $DbP && print $ErrTag;
-            &BaseTag($+);
-        }
-        elsif ( /^bgsound$|^frame$|^input$|^embed$/ ) {
-            $att =~ /\ssrc${ATTRIB}/io && $list{&UniqueUrl($+)}++;
-        }
-        elsif ( /^area$/ ) {
-            $att =~ /\shref${ATTRIB}/io && $list{&UniqueUrl($+)}++;
-        }
-        elsif ( /^body$/ ) {
-            $att =~ /\sbackground${ATTRIB}/io && $list{&UniqueUrl($+)}++;
-        }
-        elsif ( /^img$/ ) {
-            $att =~ s/\ssrc${ATTRIB}//io    && $list{&UniqueUrl($+)}++;
-            $att =~ s/\slowsrc${ATTRIB}//io && $list{&UniqueUrl($+)}++;
-            $att =~ /\sdynsrc${ATTRIB}/io   && $list{&UniqueUrl($+)}++;
-            $att =~ /\susemap${ATTRIB}/io || next;
-
-            $temp = $+;
-            $temp =~ /^#/ && ($temp = "$BaseFile$temp");
-
-            $anch = $temp =~ /(#.*)$/ ? $1 : '';
-            $url = &UniqueUrl($temp);
-            $list{$url}++;
-
-            $anch && $url =~ m#^/# &&
-                &AppendList(*WantMap, "$url$anch", $link);
-        }
-        elsif ( /^map$/ ) {
-            $att =~ s/\sname${ATTRIB}//io &&
-                ($ImgMap{"$CurFile#$+"} = "\n");
-        }
-        elsif ( /^form$/ ) {
-            $att =~ /\saction${ATTRIB}/io || next;
-            $temp = &UniqueUrl($+);
-            &AppendList(*Action, $temp, $link);
-            $list{$temp}++;
-        }
-        elsif ( /^applet$/ ) {
-            $att =~ /\scode${ATTRIB}/io or next;
-            $code = $+;
-            $code =~ /\.class$/i || ( $code .= ".class" );
-
-            my ($jar, $base);
-            $att =~ /\sarchive${ATTRIB}/io and $jar = $+;
-            my $file = $jar || $code || next;
-
-            $att =~ /\scodebase${ATTRIB}/io and do {
-                ($base = $+) =~ s#/$##;
-                $file = "$base/$file";
+        if (/^a$/) {
+            $att =~ /\shref${ATTRIB}/io and do {
+                $temp = $+;
+                $temp =~ /^#/ && ($temp = "$BaseFile$temp");
+                $anch = $temp =~ /(#.*)$/ ? $1 : '';
+                $url = &UniqueUrl($temp);
+                $list{$url}++;
+                %ProtoJS && $url =~ /^javascript:/ && &ProtoJS($url, $referer);
+                $anch && $url =~ m#^/# && $Arg{yes_anchors} &&
+                    &AppendList(*WantAnch, "$url$anch", $link);
             };
-            $list{&UniqueUrl($file)}++;
+            $att =~ /\sname${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
         }
-        elsif ( /^meta$/ ) {
-            $att =~ /\shttp-equiv${ATTRIB}/io || next;
-            $+ =~ /^refresh$/i || next;
-            $att =~ /\scontent\s*=\s*"([^"]*)"/i || next;
-            $1 =~ /url=([^"\s]+)/i || next;
-            $temp = $1;
-            $temp =~ m#^\w+://# ||
+        elsif (/^applet$/) {
+            $att =~ /\scode${ATTRIB}/io and do {
+                $code = $+;
+                $code =~ /\.class$/i || ( $code .= ".class" );
+                my ($jar, $base);
+                $att =~ /\sarchive${ATTRIB}/io and $jar = $+;
+                my $file = $jar || $code || next;
+                $att =~ /\scodebase${ATTRIB}/io and do {
+                    ($base = $+) =~ s#/$##;
+                    $file = "$base/$file";
+                };
+                $list{&UniqueUrl($file)}++;;
+            };
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^area$/) {
+            $att =~ /\shref${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^base$/) {
+            $att =~ /\shref${ATTRIB}/io and do {
+                $DbP && print $ErrTag;
+                &BaseTag($+);;
+            };
+        }
+        elsif (/^body$/) {
+            $att =~ /\sbackground${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+        }
+        elsif (/^bgsound$/) {
+            $att =~ /\ssrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^embed$/) {
+            $att =~ /\ssrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^form$/) {
+            $att =~ /\saction${ATTRIB}/io and do {
+                $temp = &UniqueUrl($+);
+                &AppendList(*Action, $temp, $link);
+                $list{$temp}++;
+            };
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^frame$/) {
+            $att =~ /\ssrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^head$/) {
+        }
+        elsif (/^html$/) {
+        }
+        elsif (/^img$/) {
+            $att =~ /\ssrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\slowsrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sdynsrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\susemap${ATTRIB}/io and do {
+                $temp = $+;
+                $temp =~ /^#/ && ($temp = "$BaseFile$temp");
+                $anch = $temp =~ /(#.*)$/ ? $1 : '';
+                $url = &UniqueUrl($temp);
+                $list{$url}++;
+                $anch && $url =~ m#^/# &&
+                &AppendList(*WantMap, "$url$anch", $link);
+            };
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^input$/) {
+            $att =~ /\ssrc${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^link$/) {
+            $att =~ /\shref${ATTRIB}/io and
+                $list{&UniqueUrl($+)}++;
+        }
+        elsif (/^map$/) {
+            $att =~ /\sname${ATTRIB}/io and
+                 ($ImgMap{"$CurFile#$+"} = "\n");
+            $att =~ /\sid${ATTRIB}/io and
+                 ($ImgMap{"$CurFile#$+"} = "\n");
+        }
+        elsif (/^meta$/) {
+            $att =~ /\shttp-equiv${ATTRIB}/io and do {
+                $+ =~ /^refresh$/i || next;
+                $att =~ /\scontent\s*=\s*"([^"]*)"/i || next;
+                $1 =~ /url=([^"\s]+)/i || next;
+                $temp = $1;
+                $temp =~ m#^\w+://# ||
                 &Warn("re-direct should be absolute", $link);
-            $url = &UniqueUrl($temp);
-            $list{$url}++;
+                $url = &UniqueUrl($temp);
+                $list{$url}++;
+            };
         }
+        elsif (/^style$/) {
+        }
+        elsif (/^title$/) {
+        }
+        else {
+            $att =~ /\sid${ATTRIB}/io and
+                $Arg{yes_anchors}
+                && ! $IGNORE_ANCHOR{$+}
+                && ($Anchor{"$CurFile#$+"} = "\n");
+        }
+
+#==============================================================================
+# end of auto generated code
+#==============================================================================
+
     }
 
     $/ = "\n";          # reset line seperator to "\n"
@@ -1819,6 +1918,9 @@ sub CheckOrphan
         next unless $checkorphan;
 
         foreach $file (@files) {
+
+            $DefIndexRE and $file =~ m/$DefIndexRE/o and next;
+
             $link = "$reldir/$file";
             next if $FileList{$link} || $dirlist{$link} ||
                 $badcase{$link};
