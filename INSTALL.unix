@@ -5,9 +5,11 @@ Quick Install
 --------------
 
    tar zxvf linklint_X.X.tgz
-   cd linklint_X.X
-   cp linklint /usr/local/bin/
-
+   cd linklint-X.X.X
+   cp linklint-X.X.X /usr/local/bin/linklint
+          --  or --
+   cp linklint-X.X.X /usr/local/bin/
+   cd /usr/local/bin; ln  -s linklint-X.X.X linklint
 
 Detailed Installation Instructions
 ----------------------------------
@@ -22,26 +24,32 @@ Detailed Installation Instructions
 
      $ cd
 
- 2. Download linklint_X.X.tgz Say ok to warnings from browser and
+ 2. Download linklint-X.X.X.tar.gz Say ok to warnings from browser and
     choose "Save File" option.
 
  4. Unzip and untar the distribution:
 
-    $ tar -zxvf linklint_X.X.tgz
+    $ tar -zxvf linklint-X.X.X.tar.gz
 
  5. Move the directory just created:
 
-    $ cd linklint_X.X/
+    $ cd linklint-X.X.X/
 
  6. Copy linklint to a directory on your path.  If you have root
     privileges then /usr/local/bin is a good place
 
-    # cp linklint /usr/local/bin/
+    # cp linklint-X.X.X /usr/local/bin/linklint
 
     otherwise you might try putting linklint in your ~/bin/ directory:
 
     $ cp linklint ~/bin/
    
+    You can instead use a symbolic link as in:
+
+    # cp linklint-X.X.X /usr/local/bin
+    # cd /usr/local/bin
+    # ln -s linklint-X.X.X linklint
+
 If you have problems putting linklint into a directory on your path,
 you can always run linklint as a Perl script:
 
