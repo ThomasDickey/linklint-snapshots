@@ -1,8 +1,12 @@
-Linklint Change History  June 26, 2001
-======================================
+Linklint Change History
+=======================
 
-Version 2.3.4  July 29, 2001
-----------------------------
+Version 2.3.4  August 8, 2001
+-----------------------------
+ o s!//+!/!g inside of UniqueUrl()
+ o added -http_header and -language options
+ o added .php and .jar files to file type list
+ o Look for applet .jar files (archive=*.jar) files 
  o Default is to use query strings in HTTP site check
  o -no_query_string changes back to "old" behavior
    (no query strings are used in HTTP site checks).
@@ -13,15 +17,23 @@ Version 2.3.3  July 6, 2001
 
 Version 2.3.2  June 22, 2001
 ----------------------------
- o -no_warn_index
- o -concise_url 
+ o -no_warn_index for missing index file warnings
+ o -concise_url suppress STDOUT output of valid remote links
 
 Version 2.3.1 June 21, 2001
 ---------------------------
- o site check proxy support
+ o site check proxy support: removed conflict with -proxy,
+   moved proxy support to Request() so it works w/ site
+   checks as well as remote URL's.
 
-Version 2.2
------------
+Version 2.3.0 June 3, 2001 
+--------------------------
+ o moved home site and email address
+ o added -help_all -version -license "@"
+ o updated to GPL
+
+Version 2.2 January 6, 2000
+---------------------------
  o GNU GPL
  o -output_frames
  o -help_all

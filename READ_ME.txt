@@ -1,6 +1,6 @@
 Linklint  - a fast link checker and web site maintenance tool
 -------------------------------------------------------------
-Version 2.3.4 July 29, 2001
+Version 2.3.4 August 8, 2001
 Copyright (C) 1997 -- 2001 James B. Bowlin.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,8 @@ linklint-X.X.X      The Linklint program
 
 INSTALLATION
 ------------
-The 2.3.4 version (and below) are plain old Perl programs so you can
-always run it (from the command line) as:
+Linklint is a plain old Perl programs so you can always run it
+(from the command line) as:
 
    perl linklint-X.X.X  [parameters]
 

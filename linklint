@@ -37,38 +37,44 @@
 #  Bugs, comments, suggestions welcome: bugs@linklint.org
 #  Updates available at http://www.linklint.org
 #
-# July 6, 2001 Version 2.3.3
-# ---------------------------
-#   added 2nd argument to mkdir() on line 921
-#   for creating url doc directory
+# RECENT CHANGES (see CHANGES.txt for full list):
 #
-# June 22, 2001 Version 2.3.2
-# ---------------------------
-#    -no_warn_index for missing index file warnings
-#    -concise_url   flag to suppress output of valid remote links
-#                   on STDOUT
+# Version 2.3.4 August 8, 2001 
+# ----------------------------
+#   o keep query string for http site checks
+#   o added no_query_string option to disable above
+#   o added "php" and "jar" file types
+#   o look for .jar files from applet tags
+#   o s!//+!/!g inside of UniqueUrl()
+#   o -http_header and -language options
 #
-# June 21, 2001 Version 2.3.1
+# Version 2.3.3 July 6, 2001 
 # ---------------------------
-#    unified -proxy support (no conflict w/ virtual hosts now)
-#    and moved it to Request() so we should support proxies
-#    for site checking
+#   o added 2nd argument to mkdir() on line 921
+#   o for creating url doc directory
 #
-# June 3, 2001 Version 2.3.0
+# Version 2.3.2 June 22, 2001 
+# ---------------------------
+#   o -no_warn_index for missing index file warnings
+#   o -concise_url flag to suppress output of valid remote links
+#     on STDOUT
+#
+# Version 2.3.1 June 21, 2001 
+# ---------------------------
+#   o unified -proxy support (no conflict w/ virtual hosts now)
+#     and moved it to Request() so we should support proxies
+#     for site checking
+#
+# Version 2.3.0 June 3, 2001 
 # --------------------------
-#    moved home site and email address
-#    added -help_all -version -license "@"
-#    updated to GPL
+#   o moved home site and email address
+#   o added -help_all -version -license "@"
+#   o updated to GPL
 #    
-# Jan 6, 2000 Version 2.2
-# -----------------------
-#    updated socket creation with "use Socket", etc.
-#    minor bug fixes, virtual host support
-#
 #========================================================================
 
-$version = "2.3.3";
-$date    = "July 6, 2001";
+$version = "2.3.4";
+$date    = "August 8, 2001";
 $prog    = "linklint";
 
 $Usage1 = <<USAGE1;
@@ -412,6 +418,8 @@ Site Checking:
   -map /a[=/b]      Subsitute leading /a with /b (for serverside image maps).
   -local linkset    Always get files that match linkset locally.
   -no_warn_index    Don't create "index file not found" warnings
+  -http_header xxx  Specifically add header "xxx" to all HTTP requests
+  -language zz      Add "Accept-Language: zz" header to all HTTP requests
 
 Network:
   -timeout t        Timeout remote links after t seconds (default 15).
@@ -488,7 +496,7 @@ ERR_USAGE
 $URL_PREFIX   = "url";
 $OUTPUT_INDEX = "index";
 
-#----- Files to try in case of a directory reference like "/"
+#----- Files to try in case of a directory reference like "/" --------
 
 @DefIndex = (
     'home.html', 'index.html', 'index.shtml', 'index.htm', 'index.cgi',
@@ -497,7 +505,7 @@ $OUTPUT_INDEX = "index";
 
 $DefCaseSens = '';
 
-#----- File extensions and floormats
+#----- File extensions and floormats ---------------
 
 $HtmlExts  = 'html|shtml|htm';
 
@@ -506,19 +514,19 @@ $AnyCgi = '\?|^/cgi-bin/|(\.(cgi|pl)(/|$))';
 $StandardMaps = '(/imagemap|/cgi-(b|w)in/(imagemap.exe|htimage))';
 
 @fileformat = (
-
-"cgi::$AnyCgi",
-'default index::\(default\)',
-"html::\.($HtmlExts)\$",
-'map::\.map$',
-'image::\.(gif|jpg|jpeg|tif|tiff|pic|pict|hdf|ras|xbm)$',
-'text::\.txt$',
-'audio::\.(au|snd|wav|aif|aiff|midi|mid)$',
-'video::\.(mpg|mpeg|avi|qt|mov)$',
-'shockwave::\.dcr$',
-'applet::\.class$',
-'other::unknown',
-
+    'php::\.php(\?|$)',
+    "cgi::$AnyCgi",
+    'default index::\(default\)',
+    "html::\.($HtmlExts)\$",
+    'java archive::\.jar$',
+    'map::\.map$',
+    'image::\.(gif|jpg|jpeg|tif|tiff|pic|pict|hdf|ras|xbm)$',
+    'text::\.txt$',
+    'audio::\.(au|snd|wav|aif|aiff|midi|mid)$',
+    'video::\.(mpg|mpeg|avi|qt|mov)$',
+    'shockwave::\.dcr$',
+    'applet::\.class$',
+    'other::unknown',
 );
 
 
@@ -549,7 +557,7 @@ foreach (@schema) {
 
 #--------------- Output Floormats ----------------------------------
 
-#---- flags used in the printout lists below
+#---- flags used in the printout lists below ---------------
 
 $LIST = 001;    $NOXR = 010;    $URLDOC  = 0100;
 $WARN = 002;    $XREF = 020;    # $URLDOC  = 0200;
@@ -617,16 +625,69 @@ $DocFlag = $LIST | $ERR | $WARN | $NOXR | $XREF | $FWD | $URLDOC;
 "${URL_PREFIX}warnF; WarnF;     042; 1; warn  %3d url%s with warnings; 1; had %d warning%s",
 );
 
-#----- Command Line Input
+#----- Command Line Input ---------------
 
-$MiscFlags = 'http|netmod|netset|output_frames|flush|retry|redirect' .
-             '|textonly|htmlonly|case|concise_url|error|forward|help|help_all' .
-             '|license|list|net|quiet|silent|orphan|version|warn|xref|no_warn_index';
+$MiscFlags = join "|", qw/
 
-$HashOpts =  'local|index|ignore|map|skip|javascript|dont_output';
+    case
+    concise_url
+    error
+    flush
+    forward
+    help
+    help_all
+    htmlonly
+    http
+    license
+    list
+    net
+    netmod
+    netset
+    no_warn_index
+    no_query_string
+    orphan
+    output_frames
+    quiet
+    redirect
+    retry
+    silent
+    textonly
+    version
+    warn
+    xref
 
-$FullOpts = 'delay|doc|host|limit|out|root|timeout|proxy|docbase|cache' .
-            '|url_doc_prefix|output_index';
+    /;
+
+$HashOpts = join "|", qw/
+
+    dont_output
+    http_header
+    ignore
+    index
+    javascript
+    language 
+    local
+    map
+    skip
+   
+    /;
+
+$FullOpts = join "|", qw/
+
+    cache
+    delay
+    doc
+    docbase
+    host
+    limit
+    out
+    output_index
+    proxy
+    root
+    timeout
+    url_doc_prefix
+
+    /;
 
 %CheckedIn = ();
 
@@ -643,7 +704,7 @@ $Headline   = "#" . "-" x 60 . "\n"; # used to print lists
 
 $ATTRIB = q~\s*=\s*("\s*([^"]*[^"\s])\s*"|'\s*([^']*[^"\s])\s*'|([^\s"']+))~;
 
-#----- prevent warnings
+#----- prevent warnings ---------------
 
 %HttpOk = %HttpFail = %CaseF = %WarnF = ();
 %UrlWarn = %Ignored = %UrlFailX = %UrlFailF = %LostMap = ();
@@ -658,7 +719,7 @@ $UrlOk = $Abort = 0;
 ###########################################################################
 
 
-    @ARGV || do { print $Usage1, $Usage; exit; };
+    @ARGV or exit_with($Usage1, $Usage);
     @infiles = &ReadArgs(@ARGV);
 
     $OUTPUT_INDEX = $Arg{output_index} if $Arg{output_index};
@@ -707,31 +768,16 @@ $UrlOk = $Abort = 0;
         $OutLog =~ m#^/# || ($OutLog = "$HOME/$OutLog" );
     };
 
-    $Arg{version} and do {
-        print $Version_Usage;
-        exit;
-    };
-
-    $Arg{license} and do {
-        print $Usage1, $LICENSE;
-        exit;
-    };
-
-    $Arg{'help_all'} && do {
-        print $Version_Usage, $Usage, $Help2, $Examples;
-        exit;
-    };
-
-    $Arg{'help'} && do { 
-        print $Usage1, $Examples, $Usage3;
-        exit;
-    };
+    $Arg{version}    and exit_with($Version_Usage);
+    $Arg{license}    and exit_with($Usage1, $LICENSE);
+    $Arg{'help_all'} and exit_with($Version_Usage, $Usage, $Help2, $Examples);
+    $Arg{'help'}     and exit_with($Usage1, $Examples, $Usage3);
 
 
     ($LogDir = $Arg{'cache'} || $ENV{'LINKLINT'} || $ENV{'HOME'} || $HOME) =~ s#/$##;
     $StatFile = $LogDir . "/linklint.url";
 
-#----- Link Spec's
+#----- Link Spec's ---------------
 
     $Arg{'case'} && do {
         $Dos || &Error("can only check case under Windows/Dos");
@@ -757,14 +803,11 @@ $UrlOk = $Abort = 0;
         m%^([^\@\#]*/)% && $Seeds{$1}++;       # directories
     }
 
-    %LinkSet && ! %Seeds && do {
-        print STDERR "\nError: Could not form any seeds from the linksets.\n";
-        exit;
-    };
+    %LinkSet && ! %Seeds and die("\nError: Could not form any seeds from the linksets.\n");
 
     $LinkSet = &LinkSet("linkset", *LinkSet);
 
-#----- Flags and Options
+#----- Flags and Options ---------------
 
     &WantNumber($Arg{'limit'},      "-limit");
     &WantNumber($Arg{'timeout'},    "-timeout");
@@ -794,8 +837,7 @@ $UrlOk = $Abort = 0;
         $Arg{'retry'} && 
             print STDERR "ERROR: -retry requires -net or -netmod or -netset\n";
 
-        print STDERR $ErrUsage;
-        exit;
+        die($ErrUsage);      
     };
 
 
@@ -857,11 +899,16 @@ $UrlOk = $Abort = 0;
 
     %DONT_OUTPUT and ( $Dont_Output = join "|", keys %DONT_OUTPUT);
 
-    %SKIP && ($Skip    = &LinkSet("skip",    *SKIP));
+    %SKIP && ($Skip    = &LinkSet("skip",  *SKIP));
+
+    $Use_QS = ($Arg{'http'} and not $Arg{no_query_string}) ? 1 : 0;
+
+    %LANGUAGE and        
+        $HTTP_HEADER{"Accept-Language: " . join ", ", sort keys %LANGUAGE} = 1;
 
     $Arg{'http'} && do {
         $ServerHost || &Error("must set -host when using -http");
-        &HttpInit(*Arg, *DB, *PASSWORD, 'spider');
+        &HttpInit(*Arg, *DB, *PASSWORD, *HTTP_HEADER, 'spider');
         $Http++;
         ($Arg{'case'} || $Arg{'orphan'} ) &&
             $Hints{"-case and -orphan don't work in -http mode."}++;
@@ -927,7 +974,7 @@ $UrlOk = $Abort = 0;
 
     &LogFile( $OutLog || $UrlLog);
 
-    &HttpInit(*Arg, *DB, *PASSWORD, 'checkonly');
+    &HttpInit(*Arg, *DB, *PASSWORD, *HTTP_HEADER, 'checkonly');
 
     $CacheNet && &Http'OpenCache($StatFile);
 
@@ -935,7 +982,7 @@ $UrlOk = $Abort = 0;
 
     $Arg{'retry'} &&
         ! (@CheckUrls = &Http'Recheck(@CheckUrls)) &&
-        ((print STDERR "No urls need to be retried.\n"), exit);
+            die("No urls need to be retried.\n");
 
     %UrlStatus = &Http'CheckURLS(@CheckUrls);
     &Http'WriteCaches;
@@ -982,8 +1029,6 @@ sub UniqueUrl
     local($_) = @_;
     local($scheme, $host, $local);
 
-    
-
     $DbP && $ErrTag && print $ErrTag;
 
     s#^([\w\.\-\+]+):## && do {                     # specified scheme
@@ -1006,7 +1051,7 @@ sub UniqueUrl
         m#^/# || ($_ = $CurPath . $_);
         s/\#.*$//;                                  # strip local anchor
         $local++;
-        s#\?.*$##;                                  # strip query string
+        $Use_QS or s#\?.*$##;                       # strip query string
     };
 
 
@@ -1022,6 +1067,7 @@ sub UniqueUrl
    # s/%([0-9a-zA-Z]{2})/pack("c",hex($1))/ge;
 
     s#\\#/#g && &Warn("\\ converted to / in $_[0]", $link);
+    s#//+#/#g && &Warn("// converted to / in $_[0]", $link);
 
     #----- make path unique by expanding /.. and /.
 
@@ -1332,7 +1378,7 @@ sub CacheDir
 sub ParseHtml
 {
     local(*HANDLE, $link, *list) = @_;
-    local($tag, $code, $temp, $url, $att, $term, $anch);
+    local($code, $tag, $temp, $url, $att, $term, $anch);
 
     &SetBase($link);
 
@@ -1441,14 +1487,19 @@ TAG:
             $list{$temp}++;
         }
         elsif ( /^applet$/ ) {
-            $att =~ /\scode${ATTRIB}/io || next;
+            $att =~ /\scode${ATTRIB}/io or next;
             $code = $+;
             $code =~ /\.class$/i || ( $code .= ".class" );
-            $att =~ /\scodebase${ATTRIB}/io && do {
-                ($temp = $+) =~ s#/$##;
-                $code = "$temp/$code";
+
+            my ($jar, $base);
+            $att =~ /\sarchive${ATTRIB}/io and $jar = $+;
+            my $file = $jar || $code || next;
+
+            $att =~ /\scodebase${ATTRIB}/io and do {
+                ($base = $+) =~ s#/$##;
+                $file = "$base/$file";
             };
-            $list{&UniqueUrl($code)}++;
+            $list{&UniqueUrl($file)}++;
         }
         elsif ( /^meta$/ ) {
             $att =~ /\shttp-equiv${ATTRIB}/io || next;
@@ -2579,6 +2630,12 @@ sub WantNumber
 }
 
 #--------------------------------------------------------------------------
+# exit_with(@msg)
+#--------------------------------------------------------------------------
+
+sub exit_with { print @_; exit;}
+
+#--------------------------------------------------------------------------
 # Error(@msg)
 #      Print @msg and exit.
 #--------------------------------------------------------------------------
@@ -2912,12 +2969,12 @@ sub ReadArgs
 
 sub HttpInit
 {
-    local($arg, $db, $pw, $agent) = @_;
+    local($arg, $db, $pw, $headers, $agent) = @_;
     defined &Http'Init || do {
         unshift(@INC, $HOME);
         require "linkhttp.pl";
     };
-    &Http'Init($arg, $db, $pw, $agent);
+    &Http'Init($arg, $db, $pw, $headers, $agent);
 }
 
 #==========================================================================
@@ -2930,7 +2987,7 @@ sub HttpInit
 #
 # Http Package
 #
-# Init(*arg, *db, *pw, $agent);
+# Init(*arg, *db, *pw, *headers, $agent);
 #     'timeout'    abort request after timeout seconds
 #     'delay'      delay between requests to same host
 #     'netset'     resets last modified state in cache
@@ -2969,14 +3026,14 @@ package Http;
 use Socket;
 
 #--------------------------------------------------------------------------
-# Init(*arg, *db, *pw, $agent)
+# Init(*arg, *db, *pw, *headers, $agent)
 #
 #     Sets up global variables. Can be called more than once.
 #--------------------------------------------------------------------------
 
 sub Init
 {
-    local(*arg, *db, *pw, $agent) = @_;
+    local(*arg, *db, *pw, *headers, $agent) = @_;
     %Arg = %arg;
     %DB  = %db;
 
@@ -3012,7 +3069,18 @@ sub Init
     $Init++ && return;
 
     $CRLF = $Arg{'DOS'} ? "\n" : pack("cc", 13, 10);
- 
+    
+    for my $header_line (keys %headers) {
+        my ($name, $value) = $header_line =~ m/^([\w\-]+):\s*(.*)/;
+        $name && $value or do {
+            &main'Warn("Could not parse -http_header $header_line");
+            next;
+         };
+        $name = join "-", map ucfirst, map lc, split /-/, $name;
+        $USER_REQ_HEAD{$name} = $value;
+        $USER_HEADERS .=  "${CRLF}$name: $value";
+    };
+
     $StatType = "url last-modified cache";
     $BotType  = "robot exclusion cache";
 
@@ -3553,6 +3621,7 @@ sub Request
 {
     my ($host, $port, $path, @other) = @_;
     my $flag;
+
     $REQHEAD{Host} = $host;
     if ($Proxy) {
         my $v_url = "http://$host";
@@ -3671,10 +3740,15 @@ sub Request4
         "\n$method http://$host$path\n",
         "host ip: $IpAddr{$host}\n";
 
-   $request = "$method $path HTTP/1.0${CRLF}User-Agent: $UserAgent";
+    $request = "$method $path HTTP/1.0";
 
-    foreach( sort keys %REQHEAD) {
-        $request .= "${CRLF}$_: $REQHEAD{$_}";
+    $USER_HEADERS and $request .= $USER_HEADERS;
+
+    $REQHEAD{"User-Agent"} = $UserAgent;
+
+    for my $name (sort keys %REQHEAD) {
+        $USER_REQ_HEAD{$name} and next;
+        $request .= "${CRLF}$name: $REQHEAD{$name}";
     }
 
     $ALARMFLAG = -12;
