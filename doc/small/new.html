@@ -21,7 +21,7 @@ Linklint Documentation - What's New
 
 
 <font size=3>
-Version 2.3.4 July 29, 2001
+Version 2.3.4 August 8, 2001
 </font>
 <p>
 <table cellpadding=0 cellspacing=1 border=0><tr><td align=right>
@@ -138,6 +138,7 @@ behavior.
 <li> Output files are more configurable
 <li> Input from STDIN
 <li> Beta SSL support now available
+<li> Looks for Java Archive .jar files
 </ul>
 
 <p>
@@ -285,7 +286,7 @@ Might make runing Linklint as a CGI program a little easier.
 <tr><td>
 <font size=2 face="helvetica,sans serif,ariel">
 <font size=3 color="#ffffff"><b>
-Misc. Flags
+Other New Flags
 </b></font>
 </font></td></tr></table>
 <p>
@@ -295,6 +296,19 @@ Misc. Flags
 <font color="#cc0000"><tt><b> -version</b></tt></font> 
 
 <font color="#cc0000"><tt><b> -license</b></tt></font> are all pretty obvious.
+
+<br>
+
+<font color="#cc0000"><tt><b>-no_query_string</b></tt></font>
+Don't use query strings in HTTP site checks
+<br>
+
+<font color="#cc0000"><tt><b>-http_header Xxx:Yyy</b></tt></font>
+Add header lines to HTTP requests.
+<br>
+
+<font color="#cc0000"><tt><b>-language zz</b></tt></font>
+Add <i>Accept-Language</i> header line to HTTP requests.
 
 <p>
 <table bgcolor="#88aacc" width="85%" cellpadding=3 cellspacing=0 border=0>
@@ -332,7 +346,7 @@ Once installed, you use <font color="#cc0000"><tt><b>-http</b></tt></font> to ch
 <tr>
 <td>
 <a href="http://www.linklint.org">
-<img src=linklint.gif alt="Checked by Linklint" border=0>
+<img src=linklint.gif alt="Checked by Linklint" border=0 WIDTH="74" HEIGHT="29">
 </a>
 </td>
 <td></td>
