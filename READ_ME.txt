@@ -1,6 +1,6 @@
 Linklint  - a fast link checker and web site maintenance tool
 -------------------------------------------------------------
-Version 2.3.2 June 25, 2001
+Version 2.3.4 July 29, 2001
 Copyright (C) 1997 -- 2001 James B. Bowlin.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,22 @@ You should have received a copy of the GNU General Public License
       Boston, MA  02111-1307, USA
  
 
-Installation
+CONTENTS
+--------
+CHANGES.txt         History of changes
+INSTALL.unix        Unix installation
+INSTALL.windows     Windows installation
+LICENSE.txt         GNU General Public License
+READ_ME.txt         this file
+linklint.bat        batch file for Windows
+doc/                HTML documentation
+doc/small/          HTML documentation (with smaller fonts)
+linklint-X.X.X      The Linklint program
+
+
+INSTALLATION
 ------------
-The 2.3.2 version (and below) are plain old Perl programs so you can
+The 2.3.4 version (and below) are plain old Perl programs so you can
 always run it (from the command line) as:
 
    perl linklint-X.X.X  [parameters]
@@ -34,7 +47,11 @@ greater).  For convenience, (on Unix) you may want to rename it to
 
 See the file INSTALL.unix or INSTALL.windows for more details.
 
+
 Enjoy.
 
 -- Jim Bowlin
+
+
+
 

@@ -37,30 +37,38 @@
 #  Bugs, comments, suggestions welcome: bugs@linklint.org
 #  Updates available at http://www.linklint.org
 #
-# June 22, 2001 2.3.2
-#    -no_warn_index for missing index file warnings
-#    -concise_url flag to suppress output of valid remote links
-#                 on STDOUT
+# July 6, 2001 Version 2.3.3
+# ---------------------------
+#   added 2nd argument to mkdir() on line 921
+#   for creating url doc directory
 #
-# June 21, 2001
+# June 22, 2001 Version 2.3.2
+# ---------------------------
+#    -no_warn_index for missing index file warnings
+#    -concise_url   flag to suppress output of valid remote links
+#                   on STDOUT
+#
+# June 21, 2001 Version 2.3.1
+# ---------------------------
 #    unified -proxy support (no conflict w/ virtual hosts now)
 #    and moved it to Request() so we should support proxies
 #    for site checking
 #
 # June 3, 2001 Version 2.3.0
+# --------------------------
 #    moved home site and email address
 #    added -help_all -version -license "@"
 #    updated to GPL
 #    
-# Jan 6, 2000 Version 2.2 
+# Jan 6, 2000 Version 2.2
+# -----------------------
 #    updated socket creation with "use Socket", etc.
 #    minor bug fixes, virtual host support
 #
-# 
 #========================================================================
 
-$version = "2.3.2";
-$date    = "June 22, 2001";
+$version = "2.3.3";
+$date    = "July 6, 2001";
 $prog    = "linklint";
 
 $Usage1 = <<USAGE1;
@@ -380,7 +388,7 @@ Usage: linklint \@file \@\@file -flag [option] linkset linkset ...
   -version          Show version info.
 
 Multi File Output:
-  -doc dir          Write many (.txt) output files in "dir" directory.
+  -doc dir          Write many output files in "dir" directory.
 
 Single File Output:
   -error  print errors          -out file      direct output to "file"
@@ -393,7 +401,7 @@ linkset:
   specific links: /link1 /link2 ...        "sub" dir and below: /sub/@ 
 USAGE
 
-$Help2 = q~
+$Help2 = <<'HELP2';
 Site Checking:
   -case             Check filename case (Windows/Dos only, local only).
   -orphan           List all unused (orphan) files (local only).
@@ -403,6 +411,7 @@ Site Checking:
   -limit n          Only check up to n html files (default 500).
   -map /a[=/b]      Subsitute leading /a with /b (for serverside image maps).
   -local linkset    Always get files that match linkset locally.
+  -no_warn_index    Don't create "index file not found" warnings
 
 Network:
   -timeout t        Timeout remote links after t seconds (default 15).
@@ -435,7 +444,7 @@ Debug Flags:
   -db1              Debug input, linkset expressions.
   -db2              Show every file that gets checked (not just html).
   -db3              Debug parser. Print tags and links found.
-  -db4              not used
+  -db4              Debug socket connections
   -db5              not used
   -db6              Detail last-modified status for remote urls.
   -db7              Print brief debug information checking remote urls.
@@ -444,11 +453,9 @@ Debug Flags:
 
   @cmndfile         Read command line options from "cmndfile".
   @@file            Check status of remote http links in "file".
+HELP2
 
-~;
-
-
-$Examples = q~
+$Examples = << 'EXAMPLES';
 Examples:
 
   1) linklint -doc linkdoc -root dir
@@ -468,12 +475,12 @@ Examples:
  
   6) linklint -doc linkdoc @@linkdoc/remote.txt
      Check remote link status without rechecking entire site.
-~;
+EXAMPLES
 
-$ErrUsage = qq~
+$ErrUsage = <<ERR_USAGE;
 Use $prog with no arguments for simple usage.
 Use "$prog -help_all" for a list of ALL options.
-~;
+ERR_USAGE
 
 
 #------------------ Start up values ----------------------------------
@@ -912,7 +919,7 @@ $UrlOk = $Abort = 0;
     $DocDir and $URL_PREFIX =~ m~/~ and do {
         $url_doc_dir = "$DocDir/$URL_PREFIX";
         $url_doc_dir =~ s~/[^/]+$~~;
-        -d $url_doc_dir or mkdir($url_doc_dir) or 
+        -d $url_doc_dir or mkdir($url_doc_dir, 0777) or 
             Error("Could not mkdir($url_doc_dir)");
     };
 
